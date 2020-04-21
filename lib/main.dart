@@ -33,6 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey buttonTwoKey = GlobalKey();
 
   int index = 0;
+  bool isTutorialVisible = false;
 
   final titles = [
     'Title ListTile',
@@ -42,6 +43,10 @@ class _MyHomePageState extends State<MyHomePage> {
   ];
 
   void startTutorial() {
+    setState(() {
+      isTutorialVisible = true;
+    });
+
     final keys = [
       listTileKey,
       cardKey,
@@ -52,10 +57,14 @@ class _MyHomePageState extends State<MyHomePage> {
     if (index >= keys.length) {
       hideOverlayEntryIfExists();
       index = 0;
+      setState(() {
+        isTutorialVisible = false;
+      });
       return;
     }
 
     GlobalKey currentKey = keys[index];
+    Scrollable.ensureVisible(currentKey.currentContext);
     setTutorialShowOverlayHook((String tagName) => print('SHOWING $tagName'));
     createTutorialOverlay(
       enableAnimationRepeat: true,
@@ -226,6 +235,9 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           ),
+          Container(
+            height: isTutorialVisible ? MediaQuery.of(context).size.height : 0,
+          )
         ],
       ),
     );
